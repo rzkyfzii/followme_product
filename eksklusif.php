@@ -8,11 +8,11 @@
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid px-4">
-               <div class="card mb-4">
+            <div class="card mb-4">
               <div class="card-header d-flex align-items-center">
-              <button type="button" class="btn btn-primary me-2" data-toggle="modal" data-target="#myModal">
-                Tambah Barang
-              </button>
+            <!-- <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#myModal">
+              Tambah Barang
+            </button> -->
               <form method="GET" action="export/export_eksklusif.php" target="_blank" class="mb-0">
                 <!-- Kirimkan lokasi yang dipilih -->
                 <input type="hidden" name="lokasi[]" value="<?= isset($_GET['lokasi']) ? $_GET['lokasi'] : '' ?>">
@@ -29,21 +29,17 @@
                           <div class="col-md-5">
                               <input type="text" class="form-control" name="search" placeholder="Cari Barang" value="<?= isset($_GET['search']) ? $_GET['search'] : ''; ?>" />
                           </div>
-                          <div class="col-md-4">
+                          <!-- <div class="col-md-4">
                               <select name="lokasi" class="form-control">
                                   <option value="">Semua Gudang</option>
                                   <option value="Gudang A" <?= (isset($_GET['lokasi']) && $_GET['lokasi'] == 'Gudang A') ? 'selected' : ''; ?>>Gudang A</option>
                                   <option value="Gudang C" <?= (isset($_GET['lokasi']) && $_GET['lokasi'] == 'Gudang C') ? 'selected' : ''; ?>>Gudang C</option>
                               </select>
-                          </div>
+                          </div> -->
                           <div class="col-md-3">
                               <button type="submit" class="btn btn-secondary w-100">Cari</button>
                           </div>
                       </div>
-                  </form>
-                  <form method="GET" action="export.php" target="_blank">
-                    <!-- Kirimkan lokasi yang dipilih -->
-                    <input type="hidden" name="lokasi[]" value="<?= isset($_GET['lokasi']) ? $_GET['lokasi'] : '' ?>">
                   </form>
                       <table id="datatablesSimple" class="table table-bordered table-striped">
                         <thead>
@@ -52,9 +48,8 @@
                                 <th>Tanggal</th>
                                 <th>Kategori</th>
                                 <th>Varian</th>
-                                <th>Kode Barang</th>
+                                <th>Kode Barcode</th>
                                 <th>Stock</th>
-                                <th>Lokasi</th>
                                 <th>image</th>
                                 <th>Aksi</th>
                             </tr>
@@ -93,7 +88,6 @@
                                 $varian = $data['varian'];
                                 $kodebarang = $data['kodebarang'];
                                 $stock = $data['stock'];
-                                $lokasi = $data['lokasi'];
                                 $idb = $data['idbarang'];
                             ?>
                                 <tr>
@@ -103,7 +97,6 @@
                                     <td><?= $varian; ?></td>
                                     <td><?= $kodebarang; ?></td>
                                     <td><?= $stock; ?></td>
-                                    <td><?= $lokasi; ?></td>
                                   <td>
                                   <?php 
                                     $imgPath = "img/" . $kodebarang . ".png";
@@ -148,7 +141,7 @@
                                                     Yakin Ingin Hapus <?= $varian; ?>?
                                                     <input type="hidden" name="idb" value="<?= $idb; ?>">
                                                     <br>
-                                                    <button type="submit" class="btn btn-danger" name="deleteEksklusif">Hapus</button>
+                                                    <button type="submit" class="btn btn-danger" name="deleteeksklusif">Hapus</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -164,81 +157,34 @@
     </main>
 </div>
 
- <!-- The Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+<!-- Modal Tambah Barang -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModalLabel">Tambah Barang</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <form method="POST" class="custom-form">
-
-        <div class="form-group">
-        <label for="kategori">Kategori:</label>
-        <select class="form-control" id="kategori" name="kategori" required>
-          <option value="">-- Pilih Kategori --</option>
-          <option value="Parfum">Parfum</option>
-          <option value="Aerosols">Aerosols</option>
-          <option value="Homecare">Homecare</option>
-          <option value="Haircare">Haircare</option>
-        </select>
-      </div>
-
-          <div class="form-group">
-            <label for="varian">Pilih Varian:</label>
-            <select class="form-control" id="varian" name="varian" onchange="isiKodeBarang()" required>
-              <option value="">-- Pilih Varian --</option>
-              <option value="GLORIOUS MOONLIGHT">GLORIOUS MOONLIGHT</option>
-              <option value="L AME DE L OCEAN">L AME DE L OCEAN</option>
-              <option value="SENSO DI BLOSSOM">SENSO DI BLOSSOM</option>
-              <option value="SUNSET FALVOR">SUNSET FALVOR</option>
-            </select>
+      <form method="POST" action="upload_scan.php" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload File Barcode</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="barcode_file" class="form-label">Upload File Hasil Scan (.TXT)</label>
+            <input type="file" name="barcode_file" id="barcode_file" class="form-control" accept=".txt" required>
           </div>
-
-          <div class="form-group">
-            <label for="kodebarang">Kode Barang:</label>
-            <input type="text" class="form-control" id="kodebarang" name="kodebarang" readonly required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="stock">Stock</label>
-              <input type="number" class="form-control" name="stock" id="stock" required min="1">
-            </div>
-            <div class="form-group col-md-6">
-            <label for="lokasi">Lokasi</label>
-            <select class="form-control" name="lokasi" id="lokasi" required>
-              <option value="">-- Pilih Gudang --</option>
-              <option value="Gudang A">Gudang A</option>
-              <option value="Gudang C">Gudang C</option>
-            </select>
-          </div>
-
-          </div>
-
-          <!-- Modal Footer -->
-          <div class="modal-footer p-0 pt-3">
-            <button type="submit" name="eksklusif" class="btn btn-primary">Simpan</button>
-            <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Batal</button>
-          </div>
-
-        </form>
-      </div>
-
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Upload</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 
-
+<script src="js/product-handler.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/product-handler.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <?php include 'layout/footer.php'; ?>
+

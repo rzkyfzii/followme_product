@@ -15,7 +15,7 @@
     <div class="bg-white py-2 collapse-inner rounded">
     <a class="collapse-item" href="eksklusif.php">EKSKLUSIF</a>
     <a class="collapse-item" href="sanju.php">SANJU</a>
-    <a class="collapse-item" href="exrait.php">EXRAIT</a>
+    <a class="collapse-item" href="exrait.php">CLASSIC</a>
     </div>
   </div>
 </li>
@@ -63,11 +63,22 @@
   </a>
   <div id="collapsekeluar" class="collapse" data-parent="#accordionSidebar">
     <div class="bg-white py-2 collapse-inner rounded">
-    <a class="collapse-item" href="keluar.php">BARANG KELUAR</a>
+    <a class="collapse-item" href="stock_keluar.php">BARANG KELUAR</a>
     </div>
   </div>
 </li>
 
+<li class="nav-item">
+  <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsepenjualan" aria-expanded="true" aria-controls="collapsepenjualan">
+   <i class="fas fa-hand-holding-usd"></i>
+  <span>LAPORAN PENJUALAN</span>
+  </a>
+  <div id="collapsepenjualan" class="collapse" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+    <a class="collapse-item" href="laporan_penjualan.php">LAPORAN PENJUALAN</a>
+    </div>
+  </div>
+</li>
 
 <!-- Sidebar Toggle Button -->
 <hr class="sidebar-divider d-none d-md-block">

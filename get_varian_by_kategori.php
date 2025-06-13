@@ -23,5 +23,11 @@ if ($kategori === 'Parfum') {
         $data[] = $row;
     }
 }
+elseif ($kategori === 'Hair Care') {
+    $res = $conn->query("SELECT varian, kodebarang FROM haircare");
+    while ($row = $res->fetch_assoc()) {
+        $data[] = $row;
+    }
+}
 
 echo json_encode($data);

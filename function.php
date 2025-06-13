@@ -11,57 +11,8 @@ if (!$conn) {
     die("Koneksi ke database gagal: " . mysqli_connect_error());
 }
 
-// tambah barang eksklusif
-if (isset($_POST['eksklusif'])) {
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
 
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    $check = mysqli_query($conn, "SELECT * FROM eksklusif 
-        WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' 
-        LIMIT 1");
-
-    if (mysqli_num_rows($check) > 0) {
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE eksklusif SET 
-            stock = stock + $stock, tanggal = '$tanggal' 
-            WHERE idbarang = '$idbarang'");
-
-        if ($update) {
-            header("Location: eksklusif.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-        }
-    } else {
-        $idbarang = uniqid("BRG-");
-
-        $insert = mysqli_query($conn, "INSERT INTO eksklusif 
-            (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES 
-            ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-
-        if ($insert) {
-            header("Location: eksklusif.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-        }
-    }
-}
-
-if(isset($_POST['deleteEksklusif'])){
+if(isset($_POST['deleteeksklusif'])){
     $idb = $_POST['idb'];
 
     $hapus = mysqli_query($conn, "delete from eksklusif where idbarang='$idb'");
@@ -73,69 +24,6 @@ if(isset($_POST['deleteEksklusif'])){
     }
 };
 
-if (isset($_POST['exrait'])) {
-    // Ambil dan proses tanggal
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
-
-    // Ambil dan sanitasi input dari form
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-    // Validasi input
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    // Cek apakah kombinasi varian + kodebarang + lokasi sudah ada
-    $check = mysqli_query($conn, "SELECT * FROM exrait
-        WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' 
-        LIMIT 1");
-
-    if (mysqli_num_rows($check) > 0) {
-        // Barang dengan kombinasi tersebut sudah ada → update stok
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE exrait SET 
-            stock = stock + $stock,
-            tanggal = '$tanggal'
-            WHERE idbarang = '$idbarang'");
-
-        if ($update) {
-            header("Location: exrait.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-        }
-
-    } else {
-        // Kombinasi belum ada → insert data baru
-        $idbarang = uniqid("BRG-");
-
-        // Jika lokasi Gudang C, masukkan juga keterangan
-        if ($lokasi === 'Gudang C') {
-            $insert = mysqli_query($conn, "INSERT INTO exrait 
-                (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES 
-                ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        } else {
-            $insert = mysqli_query($conn, "INSERT INTO exrait 
-                (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES 
-                ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        }
-
-        if ($insert) {
-            header("Location: exrait.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-        }
-    }
-}
 
 if(isset($_POST['deleteexrait'])){
     $idb = $_POST['idb'];
@@ -149,135 +37,6 @@ if(isset($_POST['deleteexrait'])){
     }
 };
 
-if (isset($_POST['sanju'])) {
-    // Ambil dan proses tanggal
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
-
-    // Ambil dan sanitasi input dari form
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-    // Validasi input
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    // Cek apakah kombinasi varian + kodebarang + lokasi sudah ada
-    $check = mysqli_query($conn, "SELECT * FROM sanju
-        WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' 
-        LIMIT 1");
-
-    if (mysqli_num_rows($check) > 0) {
-        // Barang dengan kombinasi tersebut sudah ada → update stok
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE sanju SET 
-            stock = stock + $stock,
-            tanggal = '$tanggal'
-            WHERE idbarang = '$idbarang'");
-
-        if ($update) {
-            header("Location: sanju.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-        }
-
-    } else {
-        // Kombinasi belum ada → insert data baru
-        $idbarang = uniqid("BRG-");
-
-        // Jika lokasi Gudang C, masukkan juga keterangan
-        if ($lokasi === 'Gudang C') {
-            $insert = mysqli_query($conn, "INSERT INTO sanju 
-                (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES 
-                ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        } else {
-            $insert = mysqli_query($conn, "INSERT INTO sanju 
-                (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES 
-                ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        }
-
-        if ($insert) {
-            header("Location: sanju.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-        }
-    }
-}
-
-if(isset($_POST['deletesanju'])){
-    $idb = $_POST['idb'];
-
-    $hapus = mysqli_query($conn, "delete from sanju where idbarang='$idb'");
-    if($hapus){
-        header("Location: sanju.php");
-        exit(); // Tambahkan exit setelah header
-    } else {
-        echo "Gagal menambahkan data: " . mysqli_error($conn);
-    }
-};
-
-if (isset($_POST['aerosols'])) {
-    // Ambil dan proses tanggal, default sekarang jika kosong
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
-
-    // Sanitasi input dari form
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-
-    // Validasi input
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    // Cek apakah kombinasi varian + kodebarang + lokasi sudah ada
-    $check = mysqli_query($conn, "SELECT * FROM aerosols WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' AND kategori = '$kategori' LIMIT 1");
-    if (!$check) {
-        echo "Error cek data: " . mysqli_error($conn);
-        exit;
-    }
-
-    if (mysqli_num_rows($check) > 0) {
-        // Update stok yang sudah ada
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE aerosols SET stock = stock + $stock, tanggal = '$tanggal' WHERE idbarang = '$idbarang'");
-        if ($update) {
-            header("Location: aerosols.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-            exit;
-        }
-    } else {
-        // Insert data baru
-        $idbarang = uniqid("BRG-");
-
-        $insert = mysqli_query($conn, "INSERT INTO aerosols (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        if ($insert) {
-            header("Location: aerosols.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-            exit;
-        }
-    }
-}
 
 if(isset($_POST['deleteaerosols'])){
     $idb = $_POST['idb'];
@@ -291,58 +50,6 @@ if(isset($_POST['deleteaerosols'])){
     }
 };
 
-if (isset($_POST['disffuser'])) {
-    // Ambil dan proses tanggal, default sekarang jika kosong
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
-
-    // Sanitasi input dari form
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-    // Validasi input
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    // Cek apakah kombinasi varian + kodebarang + lokasi sudah ada
-    $check = mysqli_query($conn, "SELECT * FROM disffuser WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' AND kategori = '$kategori' LIMIT 1");
-    if (!$check) {
-        echo "Error cek data: " . mysqli_error($conn);
-        exit;
-    }
-
-    if (mysqli_num_rows($check) > 0) {
-        // Update stok yang sudah ada
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE disffuser SET stock = stock + $stock, tanggal = '$tanggal' WHERE idbarang = '$idbarang'");
-        if ($update) {
-            header("Location: disffuser.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-            exit;
-        }
-    } else {
-        // Insert data baru
-        $idbarang = uniqid("BRG-");
-
-        $insert = mysqli_query($conn, "INSERT INTO disffuser (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        if ($insert) {
-            header("Location: disffuser.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-            exit;
-        }
-    }
-}
 
 if(isset($_POST['deletedisffuser'])){
     $idb = $_POST['idb'];
@@ -356,58 +63,6 @@ if(isset($_POST['deletedisffuser'])){
     }
 };
 
-if (isset($_POST['haircare'])) {
-    // Ambil dan proses tanggal, default sekarang jika kosong
-    $inputTanggal = !empty($_POST['tanggal']) ? $_POST['tanggal'] : date('Y-m-d H:i:s');
-    $tanggal = date('Y-m-d H:i:s', strtotime($inputTanggal));
-
-    // Sanitasi input dari form
-    $varian = mysqli_real_escape_string($conn, $_POST['varian'] ?? '');
-    $kodebarang = mysqli_real_escape_string($conn, $_POST['kodebarang'] ?? '');
-    $stock = (int)($_POST['stock'] ?? 0);
-    $lokasi = mysqli_real_escape_string($conn, $_POST['lokasi'] ?? '');
-    $kategori = mysqli_real_escape_string($conn, $_POST['kategori'] ?? '');
-
-    // Validasi input
-    if (empty($varian) || empty($kodebarang) || $stock <= 0 || empty($lokasi)) {
-        echo "Semua field harus diisi dengan benar.";
-        exit;
-    }
-
-    // Cek apakah kombinasi varian + kodebarang + lokasi sudah ada
-    $check = mysqli_query($conn, "SELECT * FROM haircare WHERE varian = '$varian' AND kodebarang = '$kodebarang' AND lokasi = '$lokasi' AND kategori = '$kategori' LIMIT 1");
-    if (!$check) {
-        echo "Error cek data: " . mysqli_error($conn);
-        exit;
-    }
-
-    if (mysqli_num_rows($check) > 0) {
-        // Update stok yang sudah ada
-        $existing = mysqli_fetch_assoc($check);
-        $idbarang = $existing['idbarang'];
-
-        $update = mysqli_query($conn, "UPDATE haircare SET stock = stock + $stock, tanggal = '$tanggal' WHERE idbarang = '$idbarang'");
-        if ($update) {
-            header("Location: haircare.php");
-            exit();
-        } else {
-            echo "Gagal update stock: " . mysqli_error($conn);
-            exit;
-        }
-    } else {
-        // Insert data baru
-        $idbarang = uniqid("BRG-");
-
-        $insert = mysqli_query($conn, "INSERT INTO haircare (idbarang, kategori, varian, kodebarang, stock, lokasi, tanggal) VALUES ('$idbarang', '$kategori', '$varian', '$kodebarang', $stock, '$lokasi', '$tanggal')");
-        if ($insert) {
-            header("Location: haircare.php");
-            exit();
-        } else {
-            echo "Gagal tambah barang: " . mysqli_error($conn);
-            exit;
-        }
-    }
-}
 
 if(isset($_POST['deletehaircare'])){
     $idb = $_POST['idb'];
@@ -421,6 +76,7 @@ if(isset($_POST['deletehaircare'])){
     }
 };
 
+
 if (isset($_POST['keluar'])) {
     $varian = mysqli_real_escape_string($conn, $_POST['varian']);
     $kodebarang = intval($_POST['kodebarang']);
@@ -433,7 +89,7 @@ if (isset($_POST['keluar'])) {
     }
 
     // Contoh daftar tabel kategori
-    $tabels = ['Eksklusif', 'Exrait', 'Sanju'];
+    $tabels = ['Eksklusif', 'Exrait', 'Sanju', 'aerosols', 'disffuser', 'haircare'];
     $tabelDitemukan = null;
     $stokSekarang = 0;
 
@@ -498,7 +154,7 @@ if(isset($_POST['deletekeluar'])){
 
     $hapus = mysqli_query($conn, "delete from keluar where idbarang='$idb'");
     if($hapus){
-        header("Location: keluar.php");
+        header("Location: stock_keluar.php");
         exit(); // Tambahkan exit setelah header
     } else {
         echo "Gagal menambahkan data: " . mysqli_error($conn);
